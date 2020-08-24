@@ -1,0 +1,33 @@
+[% USE ItemTypes %]
+[%- IF hold.branchcode == 'NFGAD';
+        branchname = 'Main Branch';
+    ELSIF hold.branchcode == 'NFGCA';
+        branchname = 'Dr. James Carlson Library';
+    ELSIF hold.branchcode == 'NFGNP';
+        branchname = 'Northport Library';
+    ELSE;
+        branchname = 'Outreach';
+    END; -%]
+<html>
+<body>
+<p>Dear [%borrower.firstname%] [% borrower.surname %],</p>
+
+<p>The following item is now ready for you to check out at the [% branchname %].</p>
+
+<p>[% biblio.title %]<br />
+[% ItemTypes.GetDescription(hold.item.effective_itemtype) %]<br />
+Collection: [% item.ccode %] <br />
+Barcode: [% item.barcode %] <br />
+Hold Notes: [% hold.reservenotes %] <br />
+Hold Placed: [% hold.reservedate | $KohaDates %]</p>
+
+<p>This item will remain on hold until [% hold.expirationdate | $KohaDates%]. After that date it will be held for the next person waiting in line for the item and will no longer be available for you.</p>
+
+<p>To check out this item, you must present the same library card that was used to place the hold.</p>
+
+<p>Sincerely,</p>
+
+<p>Circulation Department<br />
+Fargo Public Library</p>
+</body>
+</html>
