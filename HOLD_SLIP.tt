@@ -1,0 +1,42 @@
+[%- IF hold.branchcode == 'NFGAD';
+        branchname = 'Main Branch';
+    ELSIF hold.branchcode == 'NFGCA';
+        branchname = 'Dr. James Carlson Library';
+    ELSIF hold.branchcode == 'NFGNP';
+        branchname = 'Northport Library';
+    ELSE;
+        branchname = 'Outreach';
+    END; -%]
+
+<!-- Create a unique identifier for a patron by using the first four letters of their surname and last 4 digits on their barcode. We still use the initials field for some special accounts (mostly internal routing), so only do this if the initials are blank. -->
+<script> 
+$(document).ready(function(){ 
+    if ($("#inits").html().trim() == ""){ 
+        $("#inits").append("<h1>[% borrower.surname.substr(0,4) %][% borrower.cardnumber.substr( borrower.cardnumber.length - 4 ) %]</h1>"); 
+    } 
+}); 
+</script> 
+
+<h1 id="inits" >[% borrower.initials %]</h1>
+<br> 
+<h2>Hold Date: [% hold.waitingdate | $KohaDates %]</h2>
+<h2> Holding at [% branchname %]</h2>
+<br>
+<br>
+<br>
+<br>
+<h3>ITEM ON HOLD</h3>
+<h1>TITLE: [% biblio.title %]</h1>
+<h3>[% item.enumchron %]</h3>
+<h2>Author: [% biblio.author %]</h2>
+<div style="font-size: large;">
+<ul>
+    <li>Item Type: [% item.itype %]</li>
+    <li>Collection: [% item.ccode %]</li>
+    <li>Call Number: [% item.itemcallnumber %]</li>
+    <li>Barcode: [% item.barcode %]</li>
+    <li>Notes: [% hold.reservenotes %]</li>
+</ul>
+</div>
+
+<p style="font-size: large;">Reminder: We are not currently charging fines on overdue items. If you have any questions about your holds, or the items you have checked out, please call <<branches.branchphone>>.</p>
