@@ -1,0 +1,32 @@
+[% USE KohaDates %] 
+[% USE date %] 
+[% manip = date.manip %] 
+[% calc = date.calc %] 
+[% SET year = date.format(date.now(),'%Y') %] 
+[% SET mon = date.format(date.now(), '%-m') %] 
+[% SET day = date.format(date.now(), '%-d') %]
+ 
+<p>Dear [% borrower.firstname %] [% borrower.surname %],</p> 
+
+<p>The following item(s) are overdue and assumed lost. Charges for the replacement of the item(s) will be billed to your library account.</p> 
+
+<p>If the items are returned to the library, the charges may be reversed. If you believe an item was returned, or if you cannot locate an item and wish to pay for it, please contact the library at [% branch.branchphone %]. You may be unable to use your library card until the item(s) are returned.</p>
+
+[% FOREACH overdue IN overdues %] 
+[% SET dueYear = date.format(overdue.date_due,'%Y') %] 
+[% SET dueMon = date.format(overdue.date_due, '%-m') %] 
+[% SET dueDay = date.format(overdue.date_due, '%-d') %] 
+[% IF calc.Delta_Days(year,mon,day,dueYear,dueMon,dueDay) == -30 %] 
+
+<p>[% overdue.item.biblio.title | $Remove_MARC_punctuation %] [% IF (overdue.item.biblio.subtitle) %][% overdue.item.biblio.subtitle | $Remove_MARC_punctuation %][% END %] [% IF (overdue.item.biblio.part_name) %][% overdue.item.biblio.part_name | $Remove_MARC_punctuation %][% END %] [% IF (overdue.item.biblio.part_number) %][% overdue.item.biblio.part_number | $Remove_MARC_punctuation %][% END %]<br />
+            Barcode: [% overdue.item.barcode %]<br /> 
+            <strong>Date due: [% overdue.date_due | $KohaDates %]</strong><br /> 
+            [% IF ItemTypes.GetDescription(overdue.item.effective_itemtype) == ("ILL Circulating" || "Metro Arts Pass") %]This item cannot be renewed.<br />[% END %]
+            [% IF overdue.item.biblio.holds.count %]<em>This item has a waiting list and may not be renewable.</em><br />[% END %]
+            Cost: [% overdue.item.replacementprice %]
+        </p> 
+[% END %] 
+[% END %] 
+<p>Sincerely,</p> 
+<p>Circulation Department</br> 
+Fargo Public Library</p>
