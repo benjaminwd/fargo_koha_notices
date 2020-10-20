@@ -1,11 +1,13 @@
 [% USE KohaDates %]
 [% USE date %]
+<!-- Convert dates so the notice can do a proper date comparison with Koha date format -->
 [% manip = date.manip %]
 [% calc = date.calc %]
 [% SET year = date.format(date.now(),'%Y') %]
 [% SET mon = date.format(date.now(), '%-m') %]
 [% SET day = date.format(date.now(), '%-d') %]
 
+<!-- Check for items that are overdue, but not activating this notices trigger. This should match overduerules.pl trigger days. If Delta_Days returnes a negative, the item is overdue. Incriment if an item matches this. Used to create Other Overdues section below. -->
 [% FOREACH checkout IN borrower.checkouts %]
 [% SET dueYear = date.format(checkout.date_due,'%Y') %]
 [% SET dueMon = date.format(checkout.date_due, '%-m') %]
@@ -24,6 +26,7 @@
 <p><em>Please note that Interlibrary Loans (ILLs), Lucky Day items, Book Club in a Bag kits, and Metro Arts Passes cannot be renewed.</em></p>
 
 <h2>Items 20 Days Overdue</h2>
+<!-- Find all checkouts that this notice is triggering. Match Delta_Days to the second notice trigger in overduerules.pl -->
 [% FOREACH overdue IN overdues %]
 [% SET dueYear = date.format(overdue.date_due,'%Y') %]
 [% SET dueMon = date.format(overdue.date_due, '%-m') %]
@@ -32,12 +35,14 @@
 <p>[% overdue.item.biblio.title | $Remove_MARC_punctuation %] [% IF (overdue.item.biblio.subtitle) %][% overdue.item.biblio.subtitle | $Remove_MARC_punctuation %][% END %] [% IF (overdue.item.biblio.part_name) %][% overdue.item.biblio.part_name | $Remove_MARC_punctuation %][% END %] [% IF (overdue.item.biblio.part_number) %][% overdue.item.biblio.part_number | $Remove_MARC_punctuation %][% END %]<br />
             Barcode: [% overdue.item.barcode %]<br />
             <strong>Date due: [% overdue.date_due | $KohaDates %]</strong><br />
+<!-- Check whether this item is renewable or not -->	    
             [% IF ItemTypes.GetDescription(overdue.item.effective_itemtype) == ("ILL Circulating" || "Metro Arts Pass") %]This item cannot be renewed.[% END %]
             [% IF overdue.item.biblio.holds.count %]<em>This item has a waiting list and may not be renewable.</em>[% END %]</br>
         </p>
 [% END %]
 [% END %]
 
+<!-- Check all other overdues that are not listed above -->
 [% IF other_overdues > 0 %]
 <h2>Other Overdues</h2>
 [% FOREACH checkout IN borrower.checkouts %]
