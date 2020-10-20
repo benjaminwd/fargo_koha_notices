@@ -12,6 +12,14 @@ Finally, it cycles through checkouts and renewals and totals the items' replacem
 
 The DUEDGST cycles through all checkouts and displays items that are due today. It also checks to see if the records have holds or are non-renewable and displays an appropriate message.
 
+## Overdue and Second Overdue
+
+ODUE.tt and secondnotice.tt cycle through overdues for anything 10 or 20 days overdue, respectively. It's important that the amount overdue (in the case of these -10 and -20 days) match exactly the days in **Overdue notice/status triggers** (overduerules.pl). This notice is triggered by Koha and if they do not match, it may not show the right overdue items. This notice also checks for overdues *not* triggered and lists them seperately if so. Also includes logic to check if the item can be renewed.
+
+## Bill
+
+Similar to ODUE.tt, but includes replacement price. The trigger time must match the third trigger in **Overdue notice/status triggers** (overduerules.pl). Also includes logic to check if the item can be renewed.
+
 ## TODO
 
 1. Clean up styles to use the ```NoticeCSS``` syspref.
