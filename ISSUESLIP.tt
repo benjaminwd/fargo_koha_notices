@@ -1,0 +1,117 @@
+<!-- Set up some libraries to cleanup dates and convert today's date to a more usable format for comparing to checkout and renewal dates. -->
+[% USE KohaDates %]
+[% USE date %]
+[%- SET this_day = date.format(date.now, "%Y%m%d") %]
+
+<h2>[% branch.branchname %]</h2>
+
+<p style="font-size:17px">
+<!-- Get user's last name, trim to 4 characters, get last 4 of barcode and append it. --> 
+Checked out to <h2>[% borrower.surname.substr(0,4) %][%borrower.cardnumber.substr(borrower.cardnumber.length - 4 )%]</h2>
+ <br />
+<h2>[% today | $KohaDates %]</h2>
+
+<!-- Check if there are any items issued today. If so, increment. We will use this value to either make the Renewed Today section appear or disappear. -->
+[% issued_today = 0 %]
+[% FOREACH checkout IN borrower.checkouts %]
+[% IF date.format(checkout.issuedate, "%Y%m%d") == this_day %]
+[% issued_today = issued_today + 1 %]
+[% END %]
+[% END %]
+
+<!-- Check if there are any renewals, then check if any of those renewals were made today via a comparison to lastreneweddate. If so, increment. We will use this value to either make the Renewed Today section appear or disappear. -->
+[% renewed_today = 0 %]
+[% FOREACH checkout IN borrower.checkouts %]
+[% IF checkout.renewals %]
+[% IF date.format(checkout.lastreneweddate, "%Y%m%d") == this_day %]
+[% renewed_today = renewed_today + 1 %]
+[% END %]
+[% END %]
+[% END %]
+
+<!-- Check if there are items that were not checked out today -->
+[% already_issued = 0 %]
+[% FOREACH checkout IN borrower.checkouts %]
+[% IF date.format(checkout.issuedate, "%Y%m%d") != this_day %]
+[% already_issued = already_issued + 1 %]
+[% END %]
+[% END %]
+
+[% IF issued_today > 0%]
+<h2>Checked Out Today</h2>
+<!-- Cycle through all user checkouts. Compare checkout date to today's date, set above as the variable this_day. If they match, show them here. Also check if the bib record has holds or matches a nonrewable item type and show a message that the item is not renewable. -->
+[% FOREACH checkout IN borrower.checkouts %] 
+  [% IF date.format(checkout.issuedate, "%Y%m%d") == this_day %]
+        <p style="font-size:17px"> 
+             [% checkout.item.biblio.title | $Remove_MARC_punctuation %] [% IF (checkout.item.biblio.subtitle) %][% checkout.item.biblio.subtitle | $Remove_MARC_punctuation %][% END %] [% IF (checkout.item.biblio.part_name) %][% checkout.item.biblio.part_name | $Remove_MARC_punctuation %][% END %] [% IF (checkout.item.biblio.part_number) %][% checkout.item.biblio.part_number | $Remove_MARC_punctuation %][% END %]<br />
+            Barcode: [% checkout.item.barcode %]<br />
+            <strong>Date due: [% checkout.date_due | $KohaDates %]</strong><br />
+            [% IF ItemTypes.GetDescription(checkout.item.effective_itemtype) == ("ILL Circulating" || "Metro Arts Pass") %]This item cannot be renewed.[% END %]
+            [% IF checkout.item.biblio.holds.count %]<em>This item has a waiting list and may not be renewable.</em>[% END %]</br>
+        </p>
+  [% END %] 
+[% END %]
+<br />
+[% END %]
+
+<!-- If there are any renewals from today, add the Renewed Today section. -->
+[% IF renewed_today > 0 %]
+<h2>Renewed Today</h2>
+<!-- Similar to above, check all items, check if there are renewals and if so, check what day they were renewed as set by lastreneweddate. Not sure why we need to do the IF checkout.renewals loop, but it does not seem to work otherwise. -->
+[% FOREACH checkout IN borrower.checkouts %]
+    [% IF checkout.renewals %]
+      [% IF date.format(checkout.lastreneweddate, "%Y%m%d") == this_day %]
+        <p style="font-size:17px"> 
+            [% checkout.item.biblio.title | $Remove_MARC_punctuation %] [% IF (checkout.item.biblio.subtitle) %][% checkout.item.biblio.subtitle | $Remove_MARC_punctuation %][% END %] [% IF (checkout.item.biblio.part_name) %][% checkout.item.biblio.part_name | $Remove_MARC_punctuation %][% END %] [% IF (checkout.item.biblio.part_number) %][% checkout.item.biblio.part_number | $Remove_MARC_punctuation %][% END %]<br />
+            Barcode: [% checkout.item.barcode %]<br />
+            <strong>Date due: [% checkout.date_due | $KohaDates %]</strong>
+        </p>
+      [% END %]
+    [% END %]
+[% END %]
+<br />
+[% END %]
+
+<!-- If there are any other items checked out, add the Other Items Out section. -->
+[% IF already_issued > 0 %]
+<h2>Other Items Checked-Out</h2>
+[% FOREACH checkout IN borrower.checkouts %] 
+  [% IF date.format(checkout.issuedate, "%Y%m%d") != this_day %]
+        <p style="font-size:17px"> 
+            [% checkout.item.biblio.title | $Remove_MARC_punctuation %] [% IF (checkout.item.biblio.subtitle) %][% checkout.item.biblio.subtitle | $Remove_MARC_punctuation %][% END %] [% IF (checkout.item.biblio.part_name) %][% checkout.item.biblio.part_name | $Remove_MARC_punctuation %][% END %] [% IF (checkout.item.biblio.part_number) %][% checkout.item.biblio.part_number | $Remove_MARC_punctuation %][% END %]<br />
+            Barcode: [% checkout.item.barcode %]<br />
+            <strong>Date due: [% checkout.date_due | $KohaDates %]</strong><br />
+            [% IF ItemTypes.GetDescription(checkout.item.effective_itemtype) == ("ILL Circulating" || "Metro Arts Pass") %]This item cannot be renewed.[% END %]
+            [% IF checkout.item.biblio.holds.count %]<em>This item has a waiting list and may not be renewable.</em>[% END %]</br>
+        </p>
+  [% END %] 
+[% END %]
+<br />
+[% END %]
+   
+<!-- Cycle through user checkouts and for items checked out today, get replacement price and add it to alltotal. -->
+[% FOREACH checkout IN borrower.checkouts %]
+  [% IF date.format(checkout.issuedate, "%Y%m%d") == this_day %]
+    [% alltotal = ( alltotal + checkout.item.replacementprice ) %]
+  [% END %]
+[% END %]
+<!-- Same as above, but for renewals -->
+[% FOREACH checkout IN borrower.checkouts %]
+  [% IF checkout.renewals %]
+  [% IF date.format(checkout.lastreneweddate, "%Y%m%d") == this_day %]
+    [% alltotal = ( alltotal + checkout.item.replacementprice ) %]
+  [% END %]
+  [% END %]
+[% END %]
+<!-- If there is any money saved, display the total for the user. -->
+[% IF( alltotal > 0 ) %]
+    <div>
+        <strong>You saved <span style="font-size:120%">$[% alltotal %]</span> by using your library today!</strong>
+    </div>
+[% END %]
+<p>
+Fargo Public Library - [% branch.branchname %] <br/>
+[% branch.branchaddress1 %] <br/>
+[% branch.branchcity %], [% branch.branchstate %] [% branch.branchzip %] <br/>
+[% branch.branchphone %] <br/>
+[% branch.branchurl %] <br/></p>

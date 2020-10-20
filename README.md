@@ -8,6 +8,10 @@ ISSUEQSLIP cycles through all checkouts and displays items that were checked-out
 
 Finally, it cycles through checkouts and renewals and totals the items' replacement prices to show the user how much they saved by using the library.
 
+## Issue Slip
+
+ISSUESLIP is the same functionality as the quick slip, but adds a section for cehcked out items not checked out renewed today.
+
 ## Item Due Today
 
 The DUEDGST cycles through all checkouts and displays items that are due today. It also checks to see if the records have holds or are non-renewable and displays an appropriate message.
