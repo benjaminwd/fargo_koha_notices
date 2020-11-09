@@ -15,18 +15,18 @@
 
 <!-- Find all checkouts that this notice is triggering. Match Delta_Days to the third notice trigger in overduerules.pl. Also add replacement price to info. -->
 [% FOREACH overdue IN overdues %] 
-[% SET dueYear = date.format(overdue.date_due,'%Y') %] 
-[% SET dueMon = date.format(overdue.date_due, '%-m') %] 
-[% SET dueDay = date.format(overdue.date_due, '%-d') %] 
+[% SET dueYear = date.format(checkout.date_due,'%Y') %] 
+[% SET dueMon = date.format(checkout.date_due, '%-m') %] 
+[% SET dueDay = date.format(checkout.date_due, '%-d') %] 
 [% IF calc.Delta_Days(year,mon,day,dueYear,dueMon,dueDay) == -30 %] 
 
-<p>[% overdue.item.biblio.title | $Remove_MARC_punctuation %] [% IF (overdue.item.biblio.subtitle) %][% overdue.item.biblio.subtitle | $Remove_MARC_punctuation %][% END %] [% IF (overdue.item.biblio.part_name) %][% overdue.item.biblio.part_name | $Remove_MARC_punctuation %][% END %] [% IF (overdue.item.biblio.part_number) %][% overdue.item.biblio.part_number | $Remove_MARC_punctuation %][% END %]<br />
-            Barcode: [% overdue.item.barcode %]<br /> 
-            <strong>Date due: [% overdue.date_due | $KohaDates %]</strong><br />
+<p>[% checkout.item.biblio.title | $Remove_MARC_punctuation %][% IF (checkout.item.biblio.subtitle) %]: [% checkout.item.biblio.subtitle | $Remove_MARC_punctuation %][% END %][% IF (checkout.item.biblio.part_name) %]: [% checkout.item.biblio.part_name | $Remove_MARC_punctuation %][% END %][% IF (checkout.item.biblio.part_number) %]: [% checkout.item.biblio.part_number | $Remove_MARC_punctuation %][% END %]<br />
+            Barcode: [% checkout.item.barcode %]<br /> 
+            <strong>Date due: [% checkout.date_due | $KohaDates %]</strong><br />
 <!-- Check if items if renewable. -->
-            [% IF ItemTypes.GetDescription(overdue.item.effective_itemtype) == ("ILL Circulating" || "Metro Arts Pass") %]This item cannot be renewed.<br />[% END %]
-            [% IF overdue.item.biblio.holds.count %]<em>This item has a waiting list and may not be renewable.</em><br />[% END %]
-            Cost: [% overdue.item.replacementprice %]
+            [% IF ItemTypes.GetDescription(checkout.item.effective_itemtype) == ("ILL Circulating" || "Metro Arts Pass") %]This item cannot be renewed.<br />[% END %]
+            [% IF checkout.item.biblio.holds.count %]<em>This item has a waiting list and may not be renewable.</em><br />[% END %]
+            Cost: [% checkout.item.replacementprice %]
         </p> 
 [% END %] 
 [% END %] 

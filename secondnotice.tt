@@ -27,15 +27,15 @@
 
 <h2>Items 20 Days Overdue</h2>
 <!-- Find all checkouts that this notice is triggering. Match Delta_Days to the second notice trigger in overduerules.pl -->
-[% FOREACH overdue IN overdues %]
-[% SET dueYear = date.format(overdue.date_due,'%Y') %]
-[% SET dueMon = date.format(overdue.date_due, '%-m') %]
-[% SET dueDay = date.format(overdue.date_due, '%-d') %]
+[% FOREACH checkout IN borrower.checkouts %]
+[% SET dueYear = date.format(checkout.date_due,'%Y') %]
+[% SET dueMon = date.format(checkout.date_due, '%-m') %]
+[% SET dueDay = date.format(checkout.date_due, '%-d') %]
 [% IF calc.Delta_Days(year,mon,day,dueYear,dueMon,dueDay) == -20 %]
-<p>[% overdue.item.biblio.title | $Remove_MARC_punctuation %] [% IF (overdue.item.biblio.subtitle) %][% overdue.item.biblio.subtitle | $Remove_MARC_punctuation %][% END %] [% IF (overdue.item.biblio.part_name) %][% overdue.item.biblio.part_name | $Remove_MARC_punctuation %][% END %] [% IF (overdue.item.biblio.part_number) %][% overdue.item.biblio.part_number | $Remove_MARC_punctuation %][% END %]<br />
-            Barcode: [% overdue.item.barcode %]<br />
-            <strong>Date due: [% overdue.date_due | $KohaDates %]</strong><br />
-<!-- Check whether this item is renewable or not -->	    
+<p>[% checkout.item.biblio.title | $Remove_MARC_punctuation %][% IF (checkout.item.biblio.subtitle) %]: [% checkout.item.biblio.subtitle | $Remove_MARC_punctuation %][% END %][% IF (checkout.item.biblio.part_name) %]: [% checkout.item.biblio.part_name | $Remove_MARC_punctuation %][% END %][% IF (checkout.item.biblio.part_number) %]: [% checkout.item.biblio.part_number | $Remove_MARC_punctuation %][% END %]<br />
+            Barcode: [% checkout.item.barcode %]<br />
+            <strong>Date due: [% checkout.date_due | $KohaDates %]</strong><br />
+	    <!-- Check if this item is renewable -->
             [% IF ItemTypes.GetDescription(overdue.item.effective_itemtype) == ("ILL Circulating" || "Metro Arts Pass") %]This item cannot be renewed.[% END %]
             [% IF overdue.item.biblio.holds.count %]<em>This item has a waiting list and may not be renewable.</em>[% END %]</br>
         </p>
@@ -44,13 +44,14 @@
 
 <!-- Check all other overdues that are not listed above -->
 [% IF other_overdues > 0 %]
+<hr>
 <h2>Other Overdues</h2>
 [% FOREACH checkout IN borrower.checkouts %]
 [% SET dueYear = date.format(checkout.date_due,'%Y') %]
 [% SET dueMon = date.format(checkout.date_due, '%-m') %]
 [% SET dueDay = date.format(checkout.date_due, '%-d') %]
 [% IF calc.Delta_Days(year,mon,day,dueYear,dueMon,dueDay) <= -1 && calc.Delta_Days(year,mon,day,dueYear,dueMon,dueDay) != -20 %]
-<p>[% checkout.item.biblio.title | $Remove_MARC_punctuation %] [% IF (checkout.item.biblio.subtitle) %][% checkout.item.biblio.subtitle | $Remove_MARC_punctuation %][% END %] [% IF (checkout.item.biblio.part_name) %][% checkout.item.biblio.part_name | $Remove_MARC_punctuation %][% END %] [% IF (checkout.item.biblio.part_number) %][% checkout.item.biblio.part_number | $Remove_MARC_punctuation %][% END %]<br />
+<p>[% checkout.item.biblio.title | $Remove_MARC_punctuation %][% IF (checkout.item.biblio.subtitle) %]: [% checkout.item.biblio.subtitle | $Remove_MARC_punctuation %][% END %][% IF (checkout.item.biblio.part_name) %]: [% checkout.item.biblio.part_name | $Remove_MARC_punctuation %][% END %][% IF (checkout.item.biblio.part_number) %]: [% checkout.item.biblio.part_number | $Remove_MARC_punctuation %][% END %]<br />
             Barcode: [% checkout.item.barcode %]<br />
             <strong>Date due: [% checkout.date_due | $KohaDates %]</strong><br />
             [% IF ItemTypes.GetDescription(overdue.item.effective_itemtype) == ("ILL Circulating" || "Metro Arts Pass") %]This item cannot be renewed.[% END %]
