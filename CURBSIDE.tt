@@ -9,7 +9,7 @@
 
 [%- FOREACH h IN cp.patron.holds %] 
 <div>[%- IF h.branchcode == cp.branchcode && h.found == 'W' %] 
-[% h.biblio.title %]<br />
+Title: [% h.biblio.title %]<br />
 Collection: [% h.item.ccode %] <br />
 Barcode: [% h.item.barcode %]<br />
 [%- END %]</div>
