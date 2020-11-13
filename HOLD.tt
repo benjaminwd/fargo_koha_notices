@@ -12,7 +12,7 @@
 <body>
 <p>Dear [%borrower.firstname%] [% borrower.surname %],</p>
 
-<p>The following item is now ready for you to check out at the [% branchname %].</p>
+<p>The following item is now ready for you to pick up at the [% branchname %].</p>
 
 <p>[% biblio.title %]<br />
 [% ItemTypes.GetDescription(hold.item.effective_itemtype) %]<br />
@@ -23,7 +23,7 @@ Hold Placed: [% hold.reservedate | $KohaDates %]</p>
 
 <p>This item will remain on hold until [% hold.expirationdate | $KohaDates%]. After that date it will be held for the next person waiting in line for the item and will no longer be available for you.</p>
 
-<p>To check out this item, you must present the same library card that was used to place the hold.</p>
+<p>To pick up this item, you must schedule a curbside appointment. Use the library’s curbside scheduling feature by logging in to your account in <a href="https://catalog.fargolibrary.org/cgi-bin/koha/opac-user.pl">the catalog</a> and clicking the “your curbside pickups” tab, or you may call the library at [% branch.branchphone %] to schedule a pick-up time.</p>
 
 <p>Sincerely,</p>
 
