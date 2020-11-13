@@ -3,21 +3,23 @@
 
 <p>Dear [%borrower.firstname%] [% borrower.surname %],</p> 
 
-<p>You have a curbside pickup scheduled for [% cp.scheduled_pickup_datetime | $KohaDates with_hours => 1 %] at [% cp.library.branchname %].</p>
+<p>You have a curbside pickup scheduled for [% cp.scheduled_pickup_datetime | $KohaDates with_hours => 1 %] at the [% cp.library.branchname %].</p>
 
-<p>Any holds waiting for you at the pickup time will be included in this pickup. At this time, that list includes:</p>
+<p>Any holds waiting for you at the pick-up time will be included in this pickup. At this time, that list includes:</p>
 
-<p>[%- FOREACH h IN cp.patron.holds %] 
-    [%- IF h.branchcode == cp.branchcode && h.found == 'W' %] 
-[% h.biblio.title %], [% h.biblio.author %] ([% h.item.barcode %]) 
-    [%- END %] 
-[%- END %]</p>
+[%- FOREACH h IN cp.patron.holds %] 
+<div>[%- IF h.branchcode == cp.branchcode && h.found == 'W' %] 
+[% h.biblio.title %]<br />
+Collection: [% h.item.ccode %] <br />
+Barcode: [% h.item.barcode %]
+[%- END %]</div>
+[%- END %]
 
-<P>At your scheduled pick up time, your items will be bagged and placed on a table in the lobby of the [% cp.library.branchname %]. Each bag will have the first four letters of your last name and last four digits of your library card attached. Bags will be arranged in alphabetical order by patron last name.</p>  
+<P>At your scheduled pick-up time, your items will be bagged and placed on a table in the lobby of the [% cp.library.branchname %]. Each bag will have the first four letters of your last name and last four digits of your library card attached. Bags will be arranged in alphabetical order by patron last name.</p>  
 
-<p>When picking up materials, patrons are required to wear mask and maintain appropriate social distancing protocols.</p> 
+<p>When picking up materials, patrons are required to wear a mask and maintain appropriate social distancing protocols.</p> 
 
-<p>If you have any questions or concerns, please contact [% branchname %] at [% branch.branchphone %].</p> 
+<p>If you have any questions or concerns, please contact the [% cp.library.branchname %] at [% cp.library.branchphone %].</p> 
 
 <p>Sincerely,</p> 
 
