@@ -11,7 +11,7 @@
 <div>[%- IF h.branchcode == cp.branchcode && h.found == 'W' %] 
 [% h.biblio.title %]<br />
 Collection: [% h.item.ccode %] <br />
-Barcode: [% h.item.barcode %]
+Barcode: [% h.item.barcode %]<br />
 [%- END %]</div>
 [%- END %]
 
