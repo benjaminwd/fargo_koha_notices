@@ -1,4 +1,6 @@
-[%- USE KohaDates -%] 
+[% USE date %]
+[%- USE KohaDates -%]
+[% manip = date.manip %]
 [%- SET cp = curbside_pickup -%] 
 
 <p>Dear [%borrower.firstname%] [% borrower.surname %],</p> 
@@ -8,11 +10,14 @@
 <p>Any holds waiting for you at the pick-up time will be included in this pickup. At this time, that list includes:</p>
 
 [%- FOREACH h IN cp.patron.holds %] 
-<div>[%- IF h.branchcode == cp.branchcode && h.found == 'W' %] 
-Title: [% h.biblio.title | $Remove_MARC_punctuation %]<br />
+[%- IF h.branchcode == cp.branchcode && h.found == 'W' %]
+<div>Title: [% h.biblio.title | $Remove_MARC_punctuation %]<br />
 Collection: [% h.item.ccode %] <br />
 Barcode: [% h.item.barcode %]<br />
-[%- END %]</div>
+Hold Expires on <strong>[% h.expirationdate | $KohaDates %]</strong><br />
+[% IF manip.ParseDate(h.expirationdate) < manip.ParseDate(cp.scheduled_pickup_datetime) %]This hold expires before your pickup appointment.[% END %]<br/>
+</div><br />
+[%- END %]
 [%- END %]
 
 <P>At your scheduled pick-up time, your items will be bagged and placed on a table in the lobby of the [% cp.library.branchname %]. Each bag will have the first four letters of your last name and last four digits of your library card attached. Bags will be arranged in alphabetical order by patron last name.</p>  
