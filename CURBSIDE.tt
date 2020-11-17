@@ -15,7 +15,7 @@
 Collection: [% h.item.ccode %] <br />
 Barcode: [% h.item.barcode %]<br />
 Hold Expires on <strong>[% h.expirationdate | $KohaDates %]</strong><br />
-[% IF manip.ParseDate(h.expirationdate) < manip.ParseDate(cp.scheduled_pickup_datetime) %]This hold expires before your pickup appointment.[% END %]<br/>
+[% IF manip.ParseDate(h.expirationdate) < manip.ParseDate(cp.scheduled_pickup_datetime) %]<span style="text-decoration: underline; font-weight: bold; color: red;">Your hold expires before the appointment time you selected. Please cancel your appointment and choose an earlier date.</span>[% END %]<br/>
 </div><br />
 [%- END %]
 [%- END %]
