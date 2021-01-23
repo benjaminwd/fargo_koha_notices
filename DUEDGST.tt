@@ -10,7 +10,7 @@
  
 <p><em>Please note that Interlibrary Loans (ILLs), Book Club in a Bag kits, and Metro Arts Passes cannot be renewed.</em></p>
 
-<!-- Cycle through all user checkouts. Compare checkout date to today's date, set above as the variable this_day. If they match, show them here. Also check if the bib record has holds or matches a nonrewable item type and show a message that the item is not renewable. -->
+<!-- Cycle through all user checkouts. Compare checkout date to today, set above as the variable this_day. If they match, show them here. Also check if the bib record has holds or matches a nonrewable item type and show a message that the item is not renewable. -->
 [% FOREACH checkout IN borrower.checkouts %] 
   [% IF date.format(checkout.date_due, "%Y%m%d") == date.format(today, "%Y%m%d") %]
         <p style="font-size:17px"> 
