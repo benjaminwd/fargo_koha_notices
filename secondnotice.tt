@@ -7,7 +7,7 @@
 [% SET mon = date.format(date.now(), '%-m') %]
 [% SET day = date.format(date.now(), '%-d') %]
 
-<!-- Check for items that are overdue, but not activating this notices trigger. This should match overduerules.pl trigger days. If Delta_Days returnes a negative, the item is overdue. Incriment if an item matches this. Used to create Other Overdues section below. -->
+<!-- Check for items that are overdue, but not activating this notices trigger. This should match overduerules.pl trigger days. If Delta_Days returns a negative, the item is overdue. Increment if an item matches this. Used to create Other Overdues section below. -->
 [% FOREACH checkout IN borrower.checkouts %]
 [% SET dueYear = date.format(checkout.date_due,'%Y') %]
 [% SET dueMon = date.format(checkout.date_due, '%-m') %]
