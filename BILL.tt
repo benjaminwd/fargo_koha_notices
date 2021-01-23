@@ -23,10 +23,7 @@
 <p>[% checkout.item.biblio.title | $Remove_MARC_punctuation %][% IF (checkout.item.biblio.subtitle) %]: [% checkout.item.biblio.subtitle | $Remove_MARC_punctuation %][% END %][% IF (checkout.item.biblio.part_name) %]: [% checkout.item.biblio.part_name | $Remove_MARC_punctuation %][% END %][% IF (checkout.item.biblio.part_number) %]: [% checkout.item.biblio.part_number | $Remove_MARC_punctuation %][% END %]<br />
             Barcode: [% checkout.item.barcode %]<br /> 
             <strong>Date due: [% checkout.date_due | $KohaDates %]</strong><br />
-<!-- Check if items if renewable. -->
-            [% IF ItemTypes.GetDescription(checkout.item.effective_itemtype) == ("ILL Circulating" || "Metro Arts Pass") %]This item cannot be renewed.<br />[% END %]
-            [% IF checkout.item.biblio.holds.count %]<em>This item has a waiting list and may not be renewable.</em><br />[% END %]
-            Cost: [% checkout.item.replacementprice %]
+            Cost: $[% checkout.item.replacementprice %]
         </p> 
 [% END %] 
 [% END %] 
