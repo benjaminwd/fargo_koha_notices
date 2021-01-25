@@ -43,6 +43,8 @@ Hold Placed: [% hold.reservedate | $KohaDates %]</p>
 
 <p>To check out this item, you must present the same library card that was used to place the hold.</p>
 
+<p>If you would prefer to utilize curbside pickup for your hold items, please use the library’s curbside scheduling feature by logging in to your account at https://catalog.fargolibrary.org and clicking the “your curbside pickups” tab; or you may call the library at [% branch.branchphone %] to schedule a pick-up time. Limited curbside hours are Tuesday from 10am to 2pm, and Saturday from 1pm to 5pm, until further notice.</p>
+
 <p style="margin-top: 0px; margin-bottom: 0px;">Sincerely,</p>
 
 <p style="margin-top: 0px; margin-bottom: 0px;">Circulation Department<br />
