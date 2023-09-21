@@ -6,7 +6,7 @@
 <h2>[% branch.branchname %]</h2>
 
 <p style="font-size:17px">
-<!-- Get user's last name, trim to 4 characters, get last 4 of barcode and append it. --> 
+<!-- Get user's last name, trim to 4 characters, get last 4 of barcode and append it. -->
 Checked out to <h2>[% borrower.surname.substr(0,4) %][%borrower.cardnumber.substr(borrower.cardnumber.length - 4 )%]</h2>
  <br />
 <h2>[% today | $KohaDates %]</h2>
@@ -40,16 +40,16 @@ Checked out to <h2>[% borrower.surname.substr(0,4) %][%borrower.cardnumber.subst
 [% IF issued_today > 0%]
 <h2>Checked Out Today</h2>
 <!-- Cycle through all user checkouts. Compare checkout date to today's date, set above as the variable this_day. If they match, show them here. Also check if the bib record has holds or matches a nonrewable item type and show a message that the item is not renewable. -->
-[% FOREACH checkout IN borrower.checkouts %] 
+[% FOREACH checkout IN borrower.checkouts %]
   [% IF date.format(checkout.issuedate, "%Y%m%d") == this_day %]
-        <p style="font-size:17px"> 
+        <p style="font-size:17px">
              [% checkout.item.biblio.title | $Remove_MARC_punctuation %] [% IF (checkout.item.biblio.subtitle) %][% checkout.item.biblio.subtitle | $Remove_MARC_punctuation %][% END %] [% IF (checkout.item.biblio.part_name) %][% checkout.item.biblio.part_name | $Remove_MARC_punctuation %][% END %] [% IF (checkout.item.biblio.part_number) %][% checkout.item.biblio.part_number | $Remove_MARC_punctuation %][% END %]<br />
             Barcode: [% checkout.item.barcode %]<br />
             <strong>Date due: [% checkout.date_due | $KohaDates %]</strong><br />
-            [% IF ItemTypes.GetDescription(checkout.item.effective_itemtype) == ("ILL Circulating" || "Metro Arts Pass") %]This item cannot be renewed.[% END %]
-            [% IF checkout.item.biblio.holds.count %]<em>This item has a waiting list and may not be renewable.</em>[% END %]</br>
+            [% IF checkout.item.biblio.holds.count %]<em>This item has a waiting list and may not be renewable.</em>[% END %]
+</br>
         </p>
-  [% END %] 
+  [% END %]
 [% END %]
 <br />
 [% END %]
@@ -61,7 +61,7 @@ Checked out to <h2>[% borrower.surname.substr(0,4) %][%borrower.cardnumber.subst
 [% FOREACH checkout IN borrower.checkouts %]
     [% IF checkout.renewals %]
       [% IF date.format(checkout.lastreneweddate, "%Y%m%d") == this_day %]
-        <p style="font-size:17px"> 
+        <p style="font-size:17px">
             [% checkout.item.biblio.title | $Remove_MARC_punctuation %] [% IF (checkout.item.biblio.subtitle) %][% checkout.item.biblio.subtitle | $Remove_MARC_punctuation %][% END %] [% IF (checkout.item.biblio.part_name) %][% checkout.item.biblio.part_name | $Remove_MARC_punctuation %][% END %] [% IF (checkout.item.biblio.part_number) %][% checkout.item.biblio.part_number | $Remove_MARC_punctuation %][% END %]<br />
             Barcode: [% checkout.item.barcode %]<br />
             <strong>Date due: [% checkout.date_due | $KohaDates %]</strong>
@@ -75,20 +75,19 @@ Checked out to <h2>[% borrower.surname.substr(0,4) %][%borrower.cardnumber.subst
 <!-- If there are any other items checked out, add the Other Items Out section. -->
 [% IF already_issued > 0 %]
 <h2>Other Items Checked-Out</h2>
-[% FOREACH checkout IN borrower.checkouts %] 
+[% FOREACH checkout IN borrower.checkouts %]
   [% IF date.format(checkout.issuedate, "%Y%m%d") != this_day %]
-        <p style="font-size:17px"> 
+        <p style="font-size:17px">
             [% checkout.item.biblio.title | $Remove_MARC_punctuation %] [% IF (checkout.item.biblio.subtitle) %][% checkout.item.biblio.subtitle | $Remove_MARC_punctuation %][% END %] [% IF (checkout.item.biblio.part_name) %][% checkout.item.biblio.part_name | $Remove_MARC_punctuation %][% END %] [% IF (checkout.item.biblio.part_number) %][% checkout.item.biblio.part_number | $Remove_MARC_punctuation %][% END %]<br />
             Barcode: [% checkout.item.barcode %]<br />
             <strong>Date due: [% checkout.date_due | $KohaDates %]</strong><br />
-            [% IF ItemTypes.GetDescription(checkout.item.effective_itemtype) == ("ILL Circulating" || "Metro Arts Pass") %]This item cannot be renewed.[% END %]
-            [% IF checkout.item.biblio.holds.count %]<em>This item has a waiting list and may not be renewable.</em>[% END %]</br>
+            [% IF checkout.item.biblio.holds.count %]<em>This item has a waiting list and may not be renewable.</em>[% END %]<br />
         </p>
-  [% END %] 
+  [% END %]
 [% END %]
 <br />
 [% END %]
-   
+
 <!-- Cycle through user checkouts and for items checked out today, get replacement price and add it to alltotal. -->
 [% FOREACH checkout IN borrower.checkouts %]
   [% IF date.format(checkout.issuedate, "%Y%m%d") == this_day %]
