@@ -7,31 +7,31 @@
 [% SET mon = date.format(date.now(), '%-m') %]
 [% SET day = date.format(date.now(), '%-d') %]
 
-<!-- Check for items that are overdue, but not activating this notices trigger. This should match overduerules.pl trigger days. If Delta_Days returnes a negative, the item is overdue. Incriment if an item matches this. Used to create Other Overdues section below. -->
+<!-- Check for items that are overdue, but not activating this notices trigger. This should match overduerules.pl trigger days. In this case, this notice triggers at 14 days overdue, so we want to exclude those items. If Delta_Days returns a negative, the item is overdue. Increment if an item matches this. Used to create Other Overdues section below. -->
 [% FOREACH checkout IN borrower.checkouts %]
 [% SET dueYear = date.format(checkout.date_due,'%Y') %]
 [% SET dueMon = date.format(checkout.date_due, '%-m') %]
 [% SET dueDay = date.format(checkout.date_due, '%-d') %]
-[% IF calc.Delta_Days(year,mon,day,dueYear,dueMon,dueDay) <= -1 && calc.Delta_Days(year,mon,day,dueYear,dueMon,dueDay) != -10 %]
+[% IF calc.Delta_Days(year,mon,day,dueYear,dueMon,dueDay) <= -1 && calc.Delta_Days(year,mon,day,dueYear,dueMon,dueDay) != -14 %]
 [% other_overdues = other_overdues + 1 %]
 [% END %]
 [% END %]
 
 <p>Dear [% borrower.firstname %] [% borrower.surname %],</p>
 
-<p>Please note: the following item(s) are now overdue. Please return the item(s) to the <strong>outside</strong> bookdrop of any of our three Fargo Public Library locations, or renew them by calling [% branch.branchphone %], or renew online at www.fargolibrary.org. Items that have not been requested by another patron may be renewed up to two times.</p>
+<p>Please note: the following item(s) are now overdue. Please return the item(s) to the any of our three Fargo Public Library locations, or renew them by calling [% branch.branchphone %], or renew online at www.fargolibrary.org. Items that have not been requested by another patron may be renewed up to two times.</p>
 
-<p>The Fargo Public Library is no longer charging overdue fines, but patrons are encouraged to return materials on time so they can be checked out by the next patron. For the safety of patrons and staff, items are quarantined for several days before being checked in.</p>
+<p>Patrons are encouraged to return materials on time so they can be checked out by the next patron.</p>
  
-<p><em>Please note that Interlibrary Loans (ILLs), Lucky Day items, Book Club in a Bag kits, and Metro Arts Passes cannot be renewed.</em></p>
+<p><em>Please note that Interlibrary Loans (ILLs), Lucky Day items, and Book Club in a Bag kits cannot be renewed.</em></p>
 
-<h2>Items 10 Days Overdue</h2>
+<h2>Items 14 Days Overdue</h2>
 <!-- Find all checkouts that this notice is triggering. Match Delta_Days to the first notice trigger in overduerules.pl -->
 [% FOREACH checkout IN borrower.checkouts %]
 [% SET dueYear = date.format(checkout.date_due,'%Y') %]
 [% SET dueMon = date.format(checkout.date_due, '%-m') %]
 [% SET dueDay = date.format(checkout.date_due, '%-d') %]
-[% IF calc.Delta_Days(year,mon,day,dueYear,dueMon,dueDay) == -10 %]
+[% IF calc.Delta_Days(year,mon,day,dueYear,dueMon,dueDay) == -14 %]
 <p>[% checkout.item.biblio.title | $Remove_MARC_punctuation %][% IF (checkout.item.biblio.subtitle) %]: [% checkout.item.biblio.subtitle | $Remove_MARC_punctuation %][% END %][% IF (checkout.item.biblio.part_name) %]: [% checkout.item.biblio.part_name | $Remove_MARC_punctuation %][% END %][% IF (checkout.item.biblio.part_number) %]: [% checkout.item.biblio.part_number | $Remove_MARC_punctuation %][% END %]<br />
             Barcode: [% checkout.item.barcode %]<br />
             <strong>Date due: [% checkout.date_due | $KohaDates %]</strong><br />
@@ -50,7 +50,7 @@
 [% SET dueYear = date.format(checkout.date_due,'%Y') %]
 [% SET dueMon = date.format(checkout.date_due, '%-m') %]
 [% SET dueDay = date.format(checkout.date_due, '%-d') %]
-[% IF calc.Delta_Days(year,mon,day,dueYear,dueMon,dueDay) <= -1 && calc.Delta_Days(year,mon,day,dueYear,dueMon,dueDay) != -10 %]
+[% IF calc.Delta_Days(year,mon,day,dueYear,dueMon,dueDay) <= -1 && calc.Delta_Days(year,mon,day,dueYear,dueMon,dueDay) != -14 %]
 <p>[% checkout.item.biblio.title | $Remove_MARC_punctuation %][% IF (checkout.item.biblio.subtitle) %]: [% checkout.item.biblio.subtitle | $Remove_MARC_punctuation %][% END %][% IF (checkout.item.biblio.part_name) %]: [% checkout.item.biblio.part_name | $Remove_MARC_punctuation %][% END %][% IF (checkout.item.biblio.part_number) %]: [% checkout.item.biblio.part_number | $Remove_MARC_punctuation %][% END %]<br />
             Barcode: [% checkout.item.barcode %]<br />
             <strong>Date due: [% checkout.date_due | $KohaDates %]</strong><br />
